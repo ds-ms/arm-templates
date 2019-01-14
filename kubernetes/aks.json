@@ -1,0 +1,74 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"clusterName": {
+			"type": "string"
+		},
+		"dnsPrefix": {
+			"type": "string"
+		},
+		"clusterLocation": {
+			"type": "string"
+		},
+		"servicePrincipalClientId": {
+			"type": "securestring"
+		},
+		"servicePrincipalClientSecret": {
+			"type": "securestring"
+		},
+		"agentCount": {
+			"defaultValue": 3,
+			"type": "int"
+		},
+		"agentVMSize": {
+			"defaultValue": "Standard_D2_v2",
+			"type": "string"
+		},
+		"kubernetesVersion": {
+			"type": "string"
+		}
+	},
+	"variables": {},
+	"resources": [
+		{
+			"apiVersion": "2018-03-31",
+			"type": "Microsoft.ContainerService/managedClusters",
+			"location": "[parameters('clusterLocation')]",
+			"name": "[parameters('clusterName')]",
+			"dependsOn": [],
+			"properties": {
+				"dnsPrefix": "[parameters('dnsPrefix')]",
+				"kubernetesVersion": "[parameters('kubernetesVersion')]",
+				"addonProfiles": {
+					"httpApplicationRouting": {
+						"enabled": true
+					},
+					"omsagent": {
+						"enabled": true,
+						"config": {
+							"logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('omsWorkspaceName'))]"
+						}
+					}
+				},
+				"agentPoolProfiles": [
+					{
+						"name": "agentpool",
+						"count": "[parameters('agentCount')]",
+						"vmSize": "[parameters('agentVMSize')]"
+					}
+				],
+				"servicePrincipalProfile": {
+					"clientId": "[parameters('servicePrincipalClientId')]",
+					"secret": "[parameters('servicePrincipalClientSecret')]"
+				}
+			}
+		}
+	],
+	"outputs": {
+		"applicationRoutingZone": {
+			"value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('clusterName'))).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName]",
+			"type": "string"
+		}
+	}
+}
