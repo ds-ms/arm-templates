@@ -9,7 +9,7 @@
 			"type": "string"
 		},
 		"sku": {
-			"defaultValue": "Standard",
+			"defaultValue": "S1 Standard",
 			"type": "string"
 		},
 		"registryName": {
