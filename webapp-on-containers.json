@@ -72,7 +72,7 @@
 			},
 			"dependsOn": [
 				"[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-				"[resourceId('microsoft.insights/components/', parameters('webAppName'))]"
+				"[concat('Microsoft.ContainerRegistry/registries/', parameters('registryName'))]"
 			]
 		},
 		{
