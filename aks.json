@@ -11,10 +11,10 @@
 		"clusterLocation": {
 			"type": "string"
 		},
-		"servicePrincipalClientId": {
+		"servicePrincipalId": {
 			"type": "securestring"
 		},
-		"servicePrincipalClientSecret": {
+		"servicePrincipalKey": {
 			"type": "securestring"
 		},
 		"agentCount": {
@@ -26,6 +26,7 @@
 			"type": "string"
 		},
 		"kubernetesVersion": {
+			"defaultValue": "1.11.5",
 			"type": "string"
 		},
 		"registryName": {
@@ -62,17 +63,6 @@
 			"properties": {
 				"dnsPrefix": "[parameters('dnsPrefix')]",
 				"kubernetesVersion": "[parameters('kubernetesVersion')]",
-				"addonProfiles": {
-					"httpApplicationRouting": {
-						"enabled": true
-					},
-					"omsagent": {
-						"enabled": true,
-						"config": {
-							"logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('omsWorkspaceName'))]"
-						}
-					}
-				},
 				"agentPoolProfiles": [
 					{
 						"name": "agentpool",
@@ -81,16 +71,10 @@
 					}
 				],
 				"servicePrincipalProfile": {
-					"clientId": "[parameters('servicePrincipalClientId')]",
-					"secret": "[parameters('servicePrincipalClientSecret')]"
+					"clientId": "[parameters('servicePrincipalId')]",
+					"secret": "[parameters('servicePrincipalKey')]"
 				}
 			}
 		}
-	],
-	"outputs": {
-		"applicationRoutingZone": {
-			"value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('clusterName'))).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName]",
-			"type": "string"
-		}
-	}
+	]
 }
